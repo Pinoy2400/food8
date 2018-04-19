@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food8</title>
+    <link rel="stylesheet" href="">
+</head>
+
+<body>
+    <section id="modtager"></section>
+    <template id="myTemplate">
+       <article>
+           <h2 data-navn></h2>
+           <p data-tekst></p>
+           <p data-email></p>
+           <p data-tlf></p>
+           <p data-adresse></p>
+           <p data-aabningstider></p>
+           <a href="" data-menu>Menu</a>
+           <a href="" data-kontrolrapport>Kontrolrapport</a>
+<!--           <img src="" data-billede>-->
+       </article>
+    </template>
+
+
+    <script>
+        document.addEventListener("DOMContentLoaded", hentJson);
+        let restauranter;
+        let minTemplate = document.querySelector("#myTemplate");
+
+
+        async function hentJson() {
+            let jsonObjekt = await fetch("http://lenefroekjaer.dk/kea/02semester/tema7/food8/wordpress/wp-json/wp/v2/restaurant/");
+
+            restauranter = await jsonObjekt.json();
+
+            visRestauranter();
+        }
+
+        function visRestauranter() {
+            console.log(restauranter);
+            restauranter.forEach(restaurant => {
+                let klon = minTemplate.cloneNode(true).content;
+                klon.querySelector("[data-navn]").innerHTML = restaurant.title.rendered;
+                klon.querySelector("[data-tekst]").innerHTML = restaurant.content.rendered;
+                klon.querySelector("[data-email]").textContent = restaurant.acf.email;
+                klon.querySelector("[data-tlf]").textContent = restaurant.acf.tlf;
+                klon.querySelector("[data-adresse]").textContent = restaurant.acf.adresse + " " + restaurant.acf.post_nr;
+                klon.querySelector("[data-aabningstider]").innerHTML = restaurant.acf.aabningstider;
+                klon.querySelector("[data-menu]").href = restaurant.acf.menu.url;
+                klon.querySelector("[data-kontrolrapport]").href = restaurant.acf.kontrolrapport.url;
+//                klon.querySelector("[data-billede]").src = restaurant.acf.billede_01.url;
+                document.querySelector("#modtager").appendChild(klon);
+            })
+
+        }
+    </script>
+</body>
+</html>
