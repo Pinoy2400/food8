@@ -56,7 +56,9 @@
                     klon.querySelector("[data-tekst]").innerHTML = restaurant.content.rendered;
 
                     //Billede:
+                    if(restaurant.acf.billede_01.url) { 
                     klon.querySelector("[data-billede]").src = restaurant.acf.billede_01.url;
+                    }
 
                     //indsæt link med urlparameter
                     klon.querySelector("[data-linktilsingle]").href = "single.html?id=" + restaurant.id;

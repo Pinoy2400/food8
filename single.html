@@ -36,8 +36,7 @@
             <div id="map"></div>
         </article>
     </template>
-
-
+    
     <script>
         //læs script når DOM er hentet 
         document.addEventListener("DOMContentLoaded", getJson);
@@ -71,16 +70,20 @@
             klon.querySelector("#data-pagetider").innerHTML = page.acf.aabningstider;
             klon.querySelector("#data-pagemenu").href = page.acf.menu.url;
             klon.querySelector("#data-pagerapport").href = page.acf.kontrolrapport.url;
+            // klon.querySelector("#map").href = page.acf.kontrolrapport.url;
 
             //Billede:
-            klon.querySelector("[data-billede]").src = page.acf.billede_01.url;
+            if(page.acf.billede_01.url) {
+              klon.querySelector("[data-billede]").src = page.acf.billede_01.url;
+            }
 
             pagecontainer.appendChild(klon);
+            
+            loadScript('https://maps.googleapis.com/maps/api/js?key=AIzaSyCDewM6OiGxeZbw2Xuii0jyy-JXNvaABuo&callback=initMap', function() {});
         }
 
             // GOOGLE MAPS
             function initMap() {
-
                 // koordinater
                 let copenhagen = {
                     lat: 55.673684,
@@ -102,7 +105,6 @@
             }
                 function geocodeAddress(geocoder, resultsMap) {
                     let address = page.acf.adresse + " " + page.acf.post_nr + " " + page.acf.by_;
-
  
 
                     geocoder.geocode({
@@ -115,16 +117,36 @@
                                 position: results[0].geometry.location
                             });
                         } else {
-                            alert('Geocode was not successful for the following reason: ' + status);
+                            alert('Geocode was not successful for the following reason: ' + status + ' - The provided address was:' + address);
                         }
                     })
                 }
                 
-        
+                function loadScript( url, callback ) {
+                	  // We had a problem causing getJson() not to finish before the Google API was executed
+                	  // This function solves this problem by loading the Google map API after downloading the json data and adding a "klon" from the template
+                	  var script = document.createElement( "script" )
+                	  script.type = "text/javascript";
+                	  if(script.readyState) {  //IE
+                	    script.onreadystatechange = function() {
+                	      if ( script.readyState === "loaded" || script.readyState === "complete" ) {
+                	        script.onreadystatechange = null;
+                	        callback();
+                	      }
+                	    };
+                	  } else {  //Others
+                	    script.onload = function() {
+                	      callback();
+                	    };
+                	  }
+
+                	  script.src = url;
+                	  document.getElementsByTagName( "head" )[0].appendChild( script );
+                	}
 
     </script>
     <script src="menu.js"></script>
-     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCDewM6OiGxeZbw2Xuii0jyy-JXNvaABuo&callback=initMap"></script>
+     
 </body>
 
 </html>
