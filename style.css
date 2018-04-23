@@ -1,0 +1,126 @@
+* {margin: 0;
+padding: 0;}
+
+
+/*********/
+/**** BILLEDER ****/
+/*********/
+
+img {width: 90vw}
+
+/*********/
+/**** DROPDOWN MENU ****/
+/*********/
+
+nav {
+     overflow: hidden;
+    position: fixed;
+ }
+
+ .dropdown {
+     float: left;
+     overflow: hidden;
+     position: fixed;
+ }
+
+
+ .dropdown-content {
+     display: none;
+     position: relative;
+     z-index: 2;
+     background: white;
+ }
+
+ .show {
+     display: block;
+ }
+
+
+#map {
+            height: 400px;
+            width: 100%;
+        }
+
+
+
+/*********/
+/**** KNAPPER ****/
+/*********/
+
+button, .skjulMenu {
+    padding: 11px;
+    display: block;
+    border: none;
+    width: 100vw;
+    background-color: firebrick;
+    color: white;
+    text-decoration: none; 
+}
+
+.burgermenu {
+    text-align: center;
+    height: 100px;
+    background-color: #fffeff;
+
+}
+
+.burger {
+    visibility: hidden;
+
+}
+
+
+/*********/
+/**** BURGERMENU ****/
+/*********/
+
+
+@media screen and (max-width: 460px) {
+
+
+    .burger {
+        position: fixed;
+        padding: 25px 20px;
+        z-index: 11;
+        right: 0px;
+        top: 0px;
+        visibility: visible;
+        cursor: pointer;
+        background-color: transparent;
+        border: none;
+
+    }
+
+    .bar1,
+    .bar2,
+    .bar3 {
+        width: 40px;
+        height: 5px;
+        background-color: #0d0c0d;
+        margin: 6px 0;
+        transition: 0.4s;
+    }
+
+    nav,
+    .sortering {
+        max-height: 0px;
+        overflow: hidden;
+        transition: .6s;
+    }
+
+    nav.show,
+    .sortering.show {
+        max-height: 500px;
+    }
+    /** Rotate bars **/
+    .change .bar1 {
+        transform: rotate(-45deg) translate(-9px, 6px);
+    }
+    .change .bar2 {
+        opacity: 0;
+    }
+    .change .bar3 {
+        transform: rotate(45deg) translate(-8px, -8px);
+    }
+}
+

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="da">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sted</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <!--BURGERMENU-->
+    <div class="burgermenu">
+        <div class="burger">
+            <div class="bar1"></div>
+            <div class="bar2"></div>
+            <div class="bar3"></div>
+        </div>
+
+        <nav data-menu></nav>
+
+    </div>
+
+    <section class="pagecontainer"></section>
+    <template id="temp">
+        <h2 id="data-pagetitle">title</h2>
+        <article>
+            <p id="data-page"></p>
+            <p id="data-pageemail"></p>
+            <p id="data-pagetlf"></p>
+            <p id="data-pageadresse"></p>
+            <p id="data-pagetider"></p>
+            <a href="" id="data-pagemenu">Menu</a>
+            <a href="" id="data-pagerapport">Kontrolrapport</a>
+            <img src="" data-billede>
+            <div id="map"></div>
+        </article>
+    </template>
+
+
+    <script>
+        //læs script når DOM er hentet 
+        document.addEventListener("DOMContentLoaded", getJson);
+        let page;
+
+        async function getJson() {
+            let url = new URL(window.location.href);
+            let parameter = new URLSearchParams(url.search);
+            let id = parameter.get("id");
+
+            //Find DOM elementer
+            let pagetemplate = document.querySelector("#temp");
+            let pagecontainer = document.querySelector(".pagecontainer");
+
+
+            //hent json
+            let jsonObjekt = await fetch("http://lenefroekjaer.dk/kea/02semester/tema7/food8/wordpress/wp-json/wp/v2/restaurant/" + id)
+            
+            //http://lenefroekjaer.dk/kea/02semester/tema7/food8/wordpress/wp-json/wp/v2/restaurant/
+
+            page = await jsonObjekt.json();
+
+            //klon template og vis i DOM
+            let klon = pagetemplate.cloneNode(true).content;
+
+            klon.querySelector("#data-pagetitle").innerHTML = page.title.rendered;
+            klon.querySelector("#data-page").innerHTML = page.content.rendered;
+            klon.querySelector("#data-pageemail").textContent = page.acf.email;
+            klon.querySelector("#data-pagetlf").textContent = page.acf.tlf;
+            klon.querySelector("#data-pageadresse").textContent = page.acf.adresse + " " + page.acf.post_nr;
+            klon.querySelector("#data-pagetider").innerHTML = page.acf.aabningstider;
+            klon.querySelector("#data-pagemenu").href = page.acf.menu.url;
+            klon.querySelector("#data-pagerapport").href = page.acf.kontrolrapport.url;
+
+            //Billede:
+            klon.querySelector("[data-billede]").src = page.acf.billede_01.url;
+
+            pagecontainer.appendChild(klon);
+        }
+
+            // GOOGLE MAPS
+            function initMap() {
+
+                // koordinater
+                let copenhagen = {
+                    lat: 55.673684,
+                    lng: 12.568147
+                };
+
+                //Opretter et kort
+                let map = new google.maps.Map(document.querySelector('#map'), {
+                    //Zoom level
+                    zoom: 12,
+                    center: copenhagen
+                });
+                                   // opretter geocoder objekt
+                    let geocoder = new google.maps.Geocoder();
+                    // kalder funktion (med parametre)
+                    geocodeAddress(geocoder, map);
+
+
+            }
+                function geocodeAddress(geocoder, resultsMap) {
+                    let address = page.acf.adresse + " " + page.acf.post_nr + " " + page.acf.by_;
+
+ 
+
+                    geocoder.geocode({
+                        'address': address
+                    }, function(results, status) {
+                        if (status === 'OK') {
+                            //resultsMap.setCenter(results[0].geometry.location);
+                            let marker = new google.maps.Marker({
+                                map: resultsMap,
+                                position: results[0].geometry.location
+                            });
+                        } else {
+                            alert('Geocode was not successful for the following reason: ' + status);
+                        }
+                    })
+                }
+                
+        
+
+    </script>
+    <script src="menu.js"></script>
+     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCDewM6OiGxeZbw2Xuii0jyy-JXNvaABuo&callback=initMap"></script>
+</body>
+
+</html>

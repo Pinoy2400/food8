@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Steder</title>
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+   
+    <!--BURGERMENU-->
+        <div class="burgermenu">
+            <div class="burger">
+                <div class="bar1"></div>
+                <div class="bar2"></div>
+                <div class="bar3"></div>
+            </div>
+
+    <nav data-menu></nav>
+    
+    </div>
+    
+    <section id="modtager"></section>
+    <template id="myTemplate">
+       <article>
+            <a href="" data-linktilsingle>
+            <h2 data-navn></h2></a>
+            <p data-tekst></p>
+            <img src="" data-billede>
+       </article>
+    </template>
+
+
+    <script>
+        document.addEventListener("DOMContentLoaded", hentJson);
+        let restauranter;
+        let minTemplate = document.querySelector("#myTemplate");
+
+        async function hentJson() {
+            let jsonObjekt = await fetch("http://lenefroekjaer.dk/kea/02semester/tema7/food8/wordpress/wp-json/wp/v2/restaurant/");
+
+            restauranter = await jsonObjekt.json();
+
+            visRestauranter();
+
+        }
+
+        function visRestauranter() {
+            console.log(restauranter);
+            restauranter.forEach(restaurant => {
+                if (restaurant.acf.sted == "vinhandler") {
+                    let klon = minTemplate.cloneNode(true).content;
+                    klon.querySelector("[data-navn]").innerHTML = restaurant.title.rendered;
+                    klon.querySelector("[data-tekst]").innerHTML = restaurant.content.rendered;
+
+                    //Billede:
+                    klon.querySelector("[data-billede]").src = restaurant.acf.billede_01.url;
+
+                    //indsæt link med urlparameter
+                    klon.querySelector("[data-linktilsingle]").href = "single.html?id=" + restaurant.id;
+
+                    document.querySelector("#modtager").appendChild(klon);
+                }
+            })
+
+        }
+    </script>
+    <script src="menu.js"></script>
+</body>
+</html>
