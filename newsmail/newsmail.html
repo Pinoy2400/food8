@@ -1,0 +1,52 @@
+<!doctype html>
+<head>
+  <title>newsmail</title>
+  <style type="text/css">
+form#newsmail {margin:1em 0;display:none;}
+form#newsmail input {display:block;margin:0 0 1em;height:1.2em;padding:0.5em;}
+
+form#newsmail .button {width:8em;height:2em;background:rgb(210,210,210);border:none;cursor:pointer;}
+form#newsmail .button:hover {background:rgb(230,230,230);}
+
+#response {display:none;}
+  </style>
+</head>
+
+<body>
+  
+  <form action="?submitted=true" method="post" id="newsmail">
+    <label for="name">Navn:</label>
+    <input type="text" name="name" id="name" placeholder="Jacob Kristensen">
+    <label for="email">E-mail:</label>
+    <input type="text" name="email" id="email" placeholder="jacob@example.com">
+    <input type="submit" class="button" value="Tildmeld" class="ui_button">
+  </form>
+  <p id="response">Tak for det din Svumpukkel. Vi begynder at sende dig spam ved først-tænkelige lejlighed!</p>
+
+  <!-- JavaScript -->
+  <script type="text/javascript">
+document.addEventListener('DOMContentLoaded', newsmail_subscribe);
+
+function newsmail_subscribe() {
+  let submitted = GetURLParameter('submitted');
+
+  if (submitted == 'true') {
+    document.getElementById("response").style.display = "block";
+  } else {
+    document.getElementById('newsmail').style.display = "block";
+  }
+}
+
+function GetURLParameter(sParam) {
+  // URLSearchParams not supported by IE... So, trying this instead.
+  var sPageURL = window.location.search.substring(1);
+  var sURLVariables = sPageURL.split('&');
+  for (var i = 0; i < sURLVariables.length; i++) {
+    var sParameterName = sURLVariables[i].split('=');
+    if (sParameterName[0] == sParam) {
+      return sParameterName[1];
+    } else {return false;}
+  }
+}
+  </script>
+</body>
